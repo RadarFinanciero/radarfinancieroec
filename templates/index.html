@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radar Financiero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Azules */
+  --blue-950: #0c1a2e;
+  --blue-900: #0f2444;
+  --blue-800: #163566;
+  --blue-700: #1d4285;   /* acento principal */
+  --blue-600: #2252a8;
+  --blue-500: #2d64cc;
+  --blue-400: #4d7fe0;
+  --blue-100: #dbeafe;
+  --blue-50:  #eff6ff;
+
+  /* Grises */
+  --gray-900: #0f172a;
+  --gray-800: #1e293b;
+  --gray-700: #334155;
+  --gray-600: #475569;
+  --gray-500: #64748b;
+  --gray-400: #94a3b8;
+  --gray-300: #cbd5e1;
+  --gray-200: #e2e8f0;
+  --gray-100: #f1f5f9;
+  --gray-50:  #f8fafc;
+  --white:    #ffffff;
+
+  /* Estados */
+  --good-bg:     #f0fdf4;
+  --good-border: #86efac;
+  --good-text:   #166534;
+  --good-val:    #14532d;
+
+  --warn-bg:     #fefce8;
+  --warn-border: #fde047;
+  --warn-text:   #854d0e;
+  --warn-val:    #713f0c;
+
+  --bad-bg:      #fff1f2;
+  --bad-border:  #fda4af;
+  --bad-text:    #9f1239;
+  --bad-val:     #881337;
+}
+
+/* ─── RESET ──────────────────────────────── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--gray-50);
+  color: var(--gray-900);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ─── SCROLL SNAP CONTAINER ──────────────── */
+.snap-root {
+  height: 100dvh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+.snap-root.free {
+  scroll-snap-type: none;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  min-height: 100dvh;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--blue-900);
+  padding: 0 28px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 2px 8px rgba(0,0,0,0.25);
+}
+.hdr {
+  max-width: 920px; margin: 0 auto;
+  height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--blue-600);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.logo-name  { font-size: 0.95rem; font-weight: 700; color: var(--white); letter-spacing: -0.2px; }
+.logo-sub   { font-size: 0.62rem; color: rgba(255,255,255,0.32); }
+.hdr-badge  {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  padding: 3px 11px; border-radius: 20px;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(165deg, var(--blue-950) 0%, var(--blue-900) 55%, var(--blue-800) 100%);
+  padding: 60px 28px 68px;
+  position: relative; overflow: hidden; text-align: center;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 70%, rgba(45,100,204,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 10%, rgba(45,100,204,0.12) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero::after {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.014) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.014) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+}
+.hero-inner { max-width: 560px; margin: 0 auto; position: relative; z-index: 1; }
+.hero-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.55); font-size: 0.66rem; font-weight: 600;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 5px 13px; border-radius: 20px; margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800;
+  letter-spacing: -0.6px; line-height: 1.15;
+  color: var(--white); margin-bottom: 14px;
+}
+.hero h1 em { font-style: normal; color: var(--blue-400); }
+.hero p { color: rgba(255,255,255,0.42); font-size: 0.94rem; line-height: 1.72; }
+
+/* ── MAIN WRAPPER ── */
+.main { max-width: 920px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* ── FORM CARD ── */
+.form-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 16px; padding: 36px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.05);
+  margin-bottom: 24px;
+}
+.form-intro {
+  margin-bottom: 28px;
+}
+.form-intro h2 {
+  font-size: 1.05rem; font-weight: 700; color: var(--gray-900);
+  letter-spacing: -0.2px; margin-bottom: 5px;
+}
+.form-intro p { font-size: 0.85rem; color: var(--gray-500); line-height: 1.6; }
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-label {
+  font-size: 0.8rem; font-weight: 600; color: var(--gray-700);
+}
+.field-hint {
+  font-size: 0.72rem; color: var(--gray-400); font-weight: 400; margin-left: 4px;
+}
+.field-wrap { position: relative; }
+.field-pre {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  font-size: 0.85rem; font-weight: 500; color: var(--gray-400); pointer-events: none;
+}
+.field input {
+  width: 100%; background: var(--gray-50); border: 1px solid var(--gray-200);
+  border-radius: 9px; padding: 11px 12px 11px 28px;
+  color: var(--gray-900); font-family: 'Inter', sans-serif;
+  font-size: 0.92rem; font-weight: 500;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  outline: none;
+}
+.field input:focus {
+  border-color: var(--blue-500); background: var(--white);
+  box-shadow: 0 0 0 3px rgba(45,100,204,0.1);
+}
+.field input::placeholder { color: var(--gray-300); font-weight: 400; }
+
+/* ── EXAMPLE HELPER ── */
+.example-row {
+  background: var(--blue-50); border: 1px solid var(--blue-100);
+  border-radius: 10px; padding: 14px 18px; margin-bottom: 24px;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.example-icon { font-size: 1rem; margin-top: 1px; flex-shrink: 0; }
+.example-text { font-size: 0.8rem; color: var(--blue-700); line-height: 1.6; }
+.example-text strong { font-weight: 600; }
+
+/* ── BUTTON ── */
+.btn-run {
+  width: 100%; padding: 13px 20px;
+  background: var(--blue-700); border: none; border-radius: 9px;
+  color: var(--white); font-family: 'Inter', sans-serif;
+  font-size: 0.92rem; font-weight: 600; letter-spacing: 0.1px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+  box-shadow: 0 1px 3px rgba(12,26,46,0.3), 0 4px 12px rgba(12,26,46,0.15);
+}
+.btn-run:hover { background: var(--blue-600); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(12,26,46,0.3), 0 6px 18px rgba(12,26,46,0.18); }
+.btn-run:active { transform: translateY(0); }
+.btn-run.loading { opacity: 0.65; pointer-events: none; }
+.spinner {
+  width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.6s linear infinite; display: none;
+}
+.btn-run.loading .spinner { display: block; }
+.btn-run.loading .btn-txt { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── RESULTS ── */
+#results { display: none; animation: up 0.38s ease; }
+@keyframes up { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+
+/* ── SCORE STRIP ── */
+.score-strip {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: 14px; padding: 28px 32px; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 14px rgba(0,0,0,0.04);
+}
+.score-donut { position: relative; width: 100px; height: 100px; flex-shrink: 0; }
+.score-donut svg { width: 100px; height: 100px; transform: rotate(-90deg); }
+.score-donut circle { fill: none; stroke-width: 7; stroke-linecap: round; }
+.score-donut .trk { stroke: var(--gray-100); }
+.score-donut .fil {
+  stroke-dasharray: 251; stroke-dashoffset: 251;
+  transition: stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1), stroke 0.3s;
+}
+.score-center {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.score-n { font-size: 1.7rem; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+.score-l { font-size: 0.58rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray-400); margin-top: 2px; }
+.score-body { flex: 1; min-width: 180px; }
+.score-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.68rem; font-weight: 700;
+  padding: 3px 11px; border-radius: 20px; margin-bottom: 8px;
+  border: 1px solid transparent;
+}
+.score-body h3 { font-size: 1.08rem; font-weight: 700; letter-spacing: -0.2px; color: var(--gray-900); margin-bottom: 4px; }
+.score-body p  { font-size: 0.83rem; color: var(--gray-500); line-height: 1.6; margin-bottom: 12px; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font-size: 0.68rem; font-weight: 600;
+  padding: 3px 10px; border-radius: 20px; border: 1px solid transparent;
+}
+.tag.g { background: var(--good-bg); border-color: var(--good-border); color: var(--good-text); }
+.tag.b { background: var(--bad-bg);  border-color: var(--bad-border);  color: var(--bad-text); }
+
+/* ── INDICATOR CARDS ── */
+.ind-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px; margin-bottom: 24px;
+}
+.ind {
+  border-radius: 12px; border: 1px solid;
+  padding: 20px 22px;
+  transition: transform 0.13s, box-shadow 0.13s;
+  animation: up 0.35s ease both;
+}
+.ind:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+
+.ind.bueno  { background: var(--good-bg); border-color: var(--good-border); }
+.ind.alerta { background: var(--warn-bg); border-color: var(--warn-border); }
+.ind.critico{ background: var(--bad-bg);  border-color: var(--bad-border); }
+
+.ind-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.ind-left { display: flex; align-items: center; gap: 9px; }
+.ind-icon {
+  width: 32px; height: 32px; border-radius: 7px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
+}
+.ind.bueno  .ind-icon { background: rgba(22,101,52,0.10); }
+.ind.alerta .ind-icon { background: rgba(133,77,14,0.10); }
+.ind.critico .ind-icon{ background: rgba(159,18,57,0.10); }
+
+.ind-name { font-size: 0.8rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1px; }
+.ind-sub  { font-size: 0.68rem; color: var(--gray-500); }
+
+.ind-val  { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1; text-align: right; flex-shrink: 0; }
+.ind.bueno  .ind-val { color: var(--good-val); }
+.ind.alerta .ind-val { color: var(--warn-val); }
+.ind.critico .ind-val{ color: var(--bad-val); }
+
+.ind-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 0.61rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px; margin-top: 4px; float: right;
+  border: 1px solid transparent;
+}
+.ind.bueno  .ind-badge { background: rgba(22,101,52,0.09); border-color: var(--good-border); color: var(--good-text); }
+.ind.alerta .ind-badge { background: rgba(133,77,14,0.08); border-color: var(--warn-border); color: var(--warn-text); }
+.ind.critico .ind-badge{ background: rgba(159,18,57,0.08); border-color: var(--bad-border);  color: var(--bad-text); }
+
+.ind-sep { height: 1px; background: rgba(0,0,0,0.07); margin: 13px 0 12px; }
+.ind-msg { font-size: 0.79rem; line-height: 1.68; }
+.ind.bueno  .ind-msg  { color: var(--good-text); }
+.ind.alerta .ind-msg  { color: var(--warn-text); }
+.ind.critico .ind-msg { color: var(--bad-text); }
+
+/* Barra de progreso para punto de equilibrio */
+.pe-bar-wrap { margin-top: 10px; }
+.pe-bar-label { display: flex; justify-content: space-between; font-size: 0.68rem; font-weight: 600; margin-bottom: 5px; }
+.pe-bar-track { height: 6px; background: rgba(0,0,0,0.08); border-radius: 3px; overflow: hidden; }
+.pe-bar-fill  { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+.ind.bueno  .pe-bar-fill { background: var(--good-text); }
+.ind.alerta .pe-bar-fill { background: var(--warn-text); }
+.ind.critico .pe-bar-fill{ background: var(--bad-text); }
+
+/* ── CTA ── */
+.cta {
+  background: var(--blue-900);
+  border-radius: 16px; overflow: hidden; position: relative;
+}
+.cta::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 0%, rgba(45,100,204,0.2) 0%, transparent 60%),
+    radial-gradient(ellipse at 5% 100%, rgba(45,100,204,0.10) 0%, transparent 50%);
+  pointer-events: none;
+}
+.cta::after {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 52px 52px; pointer-events: none;
+}
+.cta-top  { padding: 48px 48px 40px; position: relative; z-index: 1; }
+.cta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5); font-size: 0.64rem; font-weight: 700;
+  letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px; margin-bottom: 16px;
+}
+.cta-top h2 {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem); font-weight: 800;
+  letter-spacing: -0.4px; line-height: 1.2;
+  color: var(--white); margin-bottom: 10px;
+}
+.cta-top h2 em { font-style: normal; color: var(--blue-400); }
+.cta-top > p {
+  color: rgba(255,255,255,0.42); font-size: 0.88rem; line-height: 1.72;
+  max-width: 500px; margin-bottom: 32px;
+}
+.ben-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px;
+}
+.ben {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 16px 16px 14px;
+  transition: background 0.14s;
+}
+.ben:hover { background: rgba(255,255,255,0.07); }
+.ben-ico   { font-size: 1.1rem; margin-bottom: 8px; }
+.ben-title { font-size: 0.8rem; font-weight: 700; color: var(--white); margin-bottom: 3px; }
+.ben-desc  { font-size: 0.73rem; color: rgba(255,255,255,0.36); line-height: 1.5; }
+
+.cta-div  { height: 1px; background: rgba(255,255,255,0.07); margin: 0 48px; position: relative; z-index: 1; }
+.cta-bot  { padding: 36px 48px 46px; position: relative; z-index: 1; }
+.cta-bot h3 { font-size: 0.97rem; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+.cta-bot > p { font-size: 0.82rem; color: rgba(255,255,255,0.36); margin-bottom: 22px; line-height: 1.6; }
+.contact-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.contact-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 10px; padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none; min-width: 190px; flex: 1;
+  transition: background 0.13s, transform 0.12s;
+}
+.contact-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-1px); }
+.cc-ico {
+  width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+  background: rgba(45,100,204,0.22); border: 1px solid rgba(45,100,204,0.3);
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.cc-lbl { font-size: 0.63rem; font-weight: 600; letter-spacing: 0.7px; text-transform: uppercase; color: rgba(255,255,255,0.33); margin-bottom: 1px; }
+.cc-val { font-size: 0.84rem; font-weight: 600; color: var(--white); }
+
+footer {
+  text-align: center; padding: 28px 0 20px;
+  font-size: 0.71rem; color: var(--gray-400);
+}
+
+@media (max-width: 600px) {
+  .hero { padding: 46px 18px 54px; }
+  .form-card { padding: 22px 18px; }
+  .score-strip { flex-direction: column; align-items: flex-start; gap: 16px; padding: 22px; }
+  .ind-grid { grid-template-columns: 1fr; }
+  .cta-top, .cta-bot { padding: 28px 20px; }
+  .cta-div { margin: 0 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr">
+    <div class="logo">
+      <div class="logo-mark">📡</div>
+      <div>
+        <div class="logo-name">Radar Financiero</div>
+      </div>
+    </div>
+    <div class="hdr-badge">Diagnóstico gratuito</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <h1>Tu negocio en números<br><em>Decisiones con claridad</em></h1>
+    <p>Con tan solo 6 datos te mostramos cómo estás hoy y qué decisiones te harán crecer</p>
+  </div>
+</div>
+  
+<!-- MAIN -->
+<div class="main">
+
+  <!-- FORMULARIO -->
+  <div class="form-card">
+    <div class="form-intro">
+      <h2>Cómo va tu negocio este mes</h2>
+      <p>Con esta información generamos tu diagnóstico personalizado con recomendaciones prácticas</p>
+    </div>
+
+    <!-- Ejemplo orientador -->
+    <div class="example-row">
+      <div class="example-icon">💡</div>
+      <div class="example-text">
+        <p>Piensa en tu negocio como un tablero de control: <strong>estos números son tus mejores indicadores.</strong></p>
+      </div>
+    </div>
+
+    <div class="fields-grid">
+      <div class="field">
+        <div class="field-label">💵 Ventas del mes <br><span class="field-hint">Todo lo que facturaste</span></div>
+        <div class="field-wrap"><span class="field-pre">$</span><input type="number" id="ventas" placeholder="0.00" min="0"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">📦 Costo de lo que vendiste <br><span class="field-hint">Mercadería, insumos o materiales</span></div>
+        <div class="field-wrap"><span class="field-pre">$</span><input type="number" id="costos" placeholder="0.00" min="0"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">🏠 Gastos fijos del mes <br><span class="field-hint">Arriendo, sueldos, servicios, etc.</span></div>
+        <div class="field-wrap"><span class="field-pre">$</span><input type="number" id="gastos" placeholder="0.00" min="0"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">🏦 Dinero disponible ahora <br><span class="field-hint">Efectivo en caja o banco</span></div>
+        <div class="field-wrap"><span class="field-pre">$</span><input type="number" id="caja" placeholder="0.00" min="0"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">📥 Ventas a clientes (por cobrar) <br><span class="field-hint">Ventas ya hechas pero aún no cobradas</span></div>
+        <div class="field-wrap"><span class="field-pre">$</span><input type="number" id="por_cobrar" placeholder="0.00" min="0"></div>
+      </div>
+      <div class="field">
+        <div class="field-label">📤 Compras a proveedores (por pagar) <br><span class="field-hint">Compras recibidas y aún no pagadas</span></div>
+        <div class="field-wrap"><span class="field-pre">$</span><input type="number" id="por_pagar" placeholder="0.00" min="0"></div>
+      </div>
+    </div>
+
+    <button class="btn-run" id="btnRun" onclick="analizar()">
+      <div class="spinner"></div>
+      <span class="btn-txt">Ver mi diagnóstico →</span>
+    </button>
+    <p style="text-align:center; font-size:0.72rem; color:var(--gray-400); margin-top:10px; line-height:1.5;">🔒 Tus datos son privados y solo se usan para generar tu diagnóstico</p>
+  </div>
+
+  <!-- RESULTADOS -->
+  <div id="results">
+
+    <!-- SCORE -->
+    <div class="score-strip">
+      <div class="score-donut">
+        <svg viewBox="0 0 100 100">
+          <circle class="trk" cx="50" cy="50" r="40"/>
+          <circle class="fil" id="sFill" cx="50" cy="50" r="40"/>
+        </svg>
+        <div class="score-center">
+          <div class="score-n" id="sNum">0</div>
+          <div class="score-l">Score</div>
+        </div>
+      </div>
+      <div class="score-body">
+        <div class="score-pill" id="sPill"></div>
+        <h3 id="sTitle"></h3>
+        <p id="sDesc"></p>
+        <div class="tag-row" id="sTags"></div>
+      </div>
+    </div>
+
+    <!-- INDICADORES -->
+    <div class="ind-grid" id="indGrid"></div>
+
+    <!-- CTA -->
+    <div class="cta">
+      <div class="cta-top">
+        <div class="cta-chip">Análisis avanzado</div>
+        <h2>Tu negocio merece<br>un diagnóstico <em>más profundo</em></h2>
+        <p>Trabajamos con expertos en análisis financiero que identifican pérdidas, optimizan tu rentabilidad y te guían para alcanzar tus metas</p>
+        <div class="ben-grid">
+          <div class="ben">
+            <div class="ben-ico">🏭</div>
+            <div class="ben-title">Análisis sectorial</div>
+            <div class="ben-desc">Comparamos tu posición frente a tus principales competidores</div>
+          </div>
+          <div class="ben">
+            <div class="ben-ico">📈</div>
+            <div class="ben-title">Proyección de crecimiento</div>
+            <div class="ben-desc">Modelamos escenarios basados en tus cifras reales</div>
+          </div>
+          <div class="ben">
+            <div class="ben-ico">🎯</div>
+            <div class="ben-title">Plan de acción</div>
+            <div class="ben-desc">Definimos acciones concretas para aumentar tu rentabilidad</div>
+          </div>
+          <div class="ben">
+            <div class="ben-ico">📄</div>
+            <div class="ben-title">Informe ejecutivo</div>
+            <div class="ben-desc">Un informe claro y profesional, listo para socios, bancos o inversionistas</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-div"></div>
+
+      <div class="cta-bot">
+        <h3>Cuéntanos tu caso</h3>
+        <div class="contact-row">
+          <a class="contact-card" href="mailto:contacto@radarfinanciero.com">
+            <div class="cc-ico">✉️</div>
+            <div>
+              <div class="cc-lbl">Correo</div>
+              <div class="cc-val">contacto@radarfinanciero.com</div>
+            </div>
+          </a>
+          <a class="contact-card" href="https://wa.me/593000000000" target="_blank">
+            <div class="cc-ico">💬</div>
+            <div>
+              <div class="cc-lbl">WhatsApp</div>
+              <div class="cc-val">+593 XX XXX XXXX</div>
+            </div>
+          </a>
+          <a class="contact-card" href="#" target="_blank">
+            <div class="cc-ico">📅</div>
+            <div>
+              <div class="cc-lbl">Reunión</div>
+              <div class="cc-val">Agenda 30 minutos gratis</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /results -->
+</div><!-- /main -->
+
+<footer>
+  Radar Financiero &nbsp;·&nbsp; Los indicadores son referenciales y no sustituyen asesoría financiera profesional.
+</footer>
+
+<script>
+const BADGE = { bueno: '✓ Bien', alerta: '⚠ Atención', critico: '✕ Crítico' };
+
+async function analizar() {
+  const btn = document.getElementById('btnRun');
+  btn.classList.add('loading');
+
+  const ids = ['ventas','costos','gastos','caja','por_cobrar','por_pagar'];
+  const data = {};
+  ids.forEach(id => {
+    const v = document.getElementById(id).value;
+    data[id] = v === '' ? 0 : parseFloat(v);
+  });
+
+  try {
+    const res    = await fetch('/analizar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    const result = await res.json();
+    if (result.success) renderResults(result);
+    else alert('Error: ' + result.error);
+  } catch(e) {
+    alert('Error de conexión. Verifica que el servidor esté activo.');
+  }
+  btn.classList.remove('loading');
+}
+
+function renderResults(data) {
+  const el = document.getElementById('results');
+  el.style.display = 'block';
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+
+  /* ── Score ring ── */
+  const score  = data.score;
+  const R      = 40;
+  const circum = 2 * Math.PI * R;
+  const offset = circum - (score / 100) * circum;
+  const fill   = document.getElementById('sFill');
+  const sColor = score >= 65 ? '#14532d' : score >= 40 ? '#713f0c' : '#881337';
+  fill.style.stroke = sColor;
+  setTimeout(() => { fill.style.strokeDasharray = circum; fill.style.strokeDashoffset = offset; }, 80);
+
+  let cur = 0;
+  const numEl = document.getElementById('sNum');
+  numEl.style.color = sColor;
+  const iv = setInterval(() => { cur = Math.min(cur + 2, score); numEl.textContent = cur; if (cur >= score) clearInterval(iv); }, 16);
+
+  /* ── Score header ── */
+  let pBg, pBorder, pColor, title, desc;
+  if (score >= 65) {
+    pBg = '#f0fdf4'; pBorder = '#86efac'; pColor = '#166534';
+    title = 'Tu negocio está en buena forma';
+    desc  = 'La mayoría de tus números están donde deberían. Tienes una base sólida para seguir creciendo.';
+  } else if (score >= 40) {
+    pBg = '#fefce8'; pBorder = '#fde047'; pColor = '#854d0e';
+    title = 'Hay algunas cosas por mejorar';
+    desc  = 'Tu negocio funciona, pero hay puntos que merecen atención. Con ajustes concretos puedes mejorar bastante.';
+  } else {
+    pBg = '#fff1f2'; pBorder = '#fda4af'; pColor = '#9f1239';
+    title = 'Tu negocio necesita atención urgente';
+    desc  = 'Varios indicadores están en zona de riesgo. Te recomendamos revisar esto pronto para evitar problemas mayores.';
+  }
+  const pill = document.getElementById('sPill');
+  pill.style.cssText = `background:${pBg}; border-color:${pBorder}; color:${pColor};`;
+  pill.textContent   = score >= 65 ? '✓ Situación saludable' : score >= 40 ? '⚠ Requiere atención' : '✕ Situación crítica';
+  document.getElementById('sTitle').textContent = title;
+  document.getElementById('sDesc').textContent  = desc;
+
+  /* Tags */
+  const tags = document.getElementById('sTags');
+  tags.innerHTML = '';
+  (data.resumen.buenos||[]).forEach(n   => { tags.innerHTML += `<span class="tag g">✓ ${n}</span>`; });
+  (data.resumen.criticos||[]).forEach(n => { tags.innerHTML += `<span class="tag b">✕ ${n}</span>`; });
+
+  /* ── Indicator cards ── */
+  const grid = document.getElementById('indGrid');
+  grid.innerHTML = '';
+  data.indicadores.forEach((ind, i) => {
+    const card = document.createElement('div');
+    card.className = `ind ${ind.estado}`;
+    card.style.animationDelay = `${i * 0.06}s`;
+
+    /* Barra de progreso para punto de equilibrio */
+    const barraHTML = ind.id === 'equilibrio' && ind.extra !== undefined ? `
+      <div class="pe-bar-wrap">
+        <div class="pe-bar-label">
+          <span>Avance sobre el mínimo necesario</span>
+          <span>${Math.min(ind.extra, 100).toFixed(0)}%</span>
+        </div>
+        <div class="pe-bar-track">
+          <div class="pe-bar-fill" style="width:0%" data-w="${Math.min(ind.extra, 100)}%"></div>
+        </div>
+      </div>` : '';
+
+    card.innerHTML = `
+      <div class="ind-head">
+        <div class="ind-left">
+          <div class="ind-icon">${ind.icono}</div>
+          <div>
+            <div class="ind-name">${ind.nombre}</div>
+            <div class="ind-sub">${ind.subtitulo}</div>
+          </div>
+        </div>
+        <div style="text-align:right; flex-shrink:0;">
+          <div class="ind-val">${ind.valor_fmt}</div>
+          <div class="ind-badge">${BADGE[ind.estado]}</div>
+        </div>
+      </div>
+      <div class="ind-sep"></div>
+      <div class="ind-msg">${ind.mensaje}</div>
+      ${barraHTML}
+    `;
+    grid.appendChild(card);
+  });
+
+  /* Animate progress bars */
+  setTimeout(() => {
+    document.querySelectorAll('.pe-bar-fill').forEach(b => { b.style.width = b.dataset.w; });
+  }, 300);
+}
+</script>
+</body>
+</html>
