@@ -18,7 +18,7 @@
   --blue-400: #4d7fe0;
   --blue-100: #dbeafe;
   --blue-50:  #eff6ff;
-
+ 
   /* Grises */
   --gray-900: #0f172a;
   --gray-800: #1e293b;
@@ -31,29 +31,29 @@
   --gray-100: #f1f5f9;
   --gray-50:  #f8fafc;
   --white:    #ffffff;
-
+ 
   /* Estados */
   --good-bg:     #f0fdf4;
   --good-border: #86efac;
   --good-text:   #166534;
   --good-val:    #14532d;
-
+ 
   --warn-bg:     #fefce8;
   --warn-border: #fde047;
   --warn-text:   #854d0e;
   --warn-val:    #713f0c;
-
+ 
   --bad-bg:      #fff1f2;
   --bad-border:  #fda4af;
   --bad-text:    #9f1239;
   --bad-val:     #881337;
 }
-
+ 
 /* ─── RESET ──────────────────────────────── */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-
+ 
 html { scroll-behavior: smooth; }
-
+ 
 body {
   background: var(--gray-50);
   color: var(--gray-900);
@@ -62,7 +62,7 @@ body {
   font-size: 15px;
   line-height: 1.5;
 }
-
+ 
 /* ─── SCROLL SNAP CONTAINER ──────────────── */
 .snap-root {
   height: 100dvh;
@@ -73,13 +73,13 @@ body {
 .snap-root.free {
   scroll-snap-type: none;
 }
-
+ 
 .snap-section {
   scroll-snap-align: start;
   scroll-snap-stop: always;
   min-height: 100dvh;
 }
-
+ 
 /* ── HEADER ── */
 header {
   background: var(--blue-900);
@@ -107,7 +107,7 @@ header {
   background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
   padding: 3px 11px; border-radius: 20px;
 }
-
+ 
 /* ── HERO ── */
 .hero {
   background: linear-gradient(165deg, var(--blue-950) 0%, var(--blue-900) 55%, var(--blue-800) 100%);
@@ -145,10 +145,10 @@ header {
 }
 .hero h1 em { font-style: normal; color: var(--blue-400); }
 .hero p { color: rgba(255,255,255,0.42); font-size: 0.94rem; line-height: 1.72; }
-
+ 
 /* ── MAIN WRAPPER ── */
 .main { max-width: 920px; margin: 0 auto; padding: 40px 24px 80px; }
-
+ 
 /* ── FORM CARD ── */
 .form-card {
   background: var(--white);
@@ -165,14 +165,14 @@ header {
   letter-spacing: -0.2px; margin-bottom: 5px;
 }
 .form-intro p { font-size: 0.85rem; color: var(--gray-500); line-height: 1.6; }
-
+ 
 .fields-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
-
+ 
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field-label {
   font-size: 0.8rem; font-weight: 600; color: var(--gray-700);
@@ -198,7 +198,7 @@ header {
   box-shadow: 0 0 0 3px rgba(45,100,204,0.1);
 }
 .field input::placeholder { color: var(--gray-300); font-weight: 400; }
-
+ 
 /* ── EXAMPLE HELPER ── */
 .example-row {
   background: var(--blue-50); border: 1px solid var(--blue-100);
@@ -208,7 +208,7 @@ header {
 .example-icon { font-size: 1rem; margin-top: 1px; flex-shrink: 0; }
 .example-text { font-size: 0.8rem; color: var(--blue-700); line-height: 1.6; }
 .example-text strong { font-weight: 600; }
-
+ 
 /* ── BUTTON ── */
 .btn-run {
   width: 100%; padding: 13px 20px;
@@ -231,11 +231,11 @@ header {
 .btn-run.loading .spinner { display: block; }
 .btn-run.loading .btn-txt { display: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
+ 
 /* ── RESULTS ── */
 #results { display: none; animation: up 0.38s ease; }
 @keyframes up { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
-
+ 
 /* ── SCORE STRIP ── */
 .score-strip {
   background: var(--white); border: 1px solid var(--gray-200);
@@ -273,7 +273,7 @@ header {
 }
 .tag.g { background: var(--good-bg); border-color: var(--good-border); color: var(--good-text); }
 .tag.b { background: var(--bad-bg);  border-color: var(--bad-border);  color: var(--bad-text); }
-
+ 
 /* ── INDICATOR CARDS ── */
 .ind-grid {
   display: grid;
@@ -287,11 +287,11 @@ header {
   animation: up 0.35s ease both;
 }
 .ind:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
-
+ 
 .ind.bueno  { background: var(--good-bg); border-color: var(--good-border); }
 .ind.alerta { background: var(--warn-bg); border-color: var(--warn-border); }
 .ind.critico{ background: var(--bad-bg);  border-color: var(--bad-border); }
-
+ 
 .ind-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
 .ind-left { display: flex; align-items: center; gap: 9px; }
 .ind-icon {
@@ -301,15 +301,15 @@ header {
 .ind.bueno  .ind-icon { background: rgba(22,101,52,0.10); }
 .ind.alerta .ind-icon { background: rgba(133,77,14,0.10); }
 .ind.critico .ind-icon{ background: rgba(159,18,57,0.10); }
-
+ 
 .ind-name { font-size: 0.8rem; font-weight: 700; color: var(--gray-800); margin-bottom: 1px; }
 .ind-sub  { font-size: 0.68rem; color: var(--gray-500); }
-
+ 
 .ind-val  { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1; text-align: right; flex-shrink: 0; }
 .ind.bueno  .ind-val { color: var(--good-val); }
 .ind.alerta .ind-val { color: var(--warn-val); }
 .ind.critico .ind-val{ color: var(--bad-val); }
-
+ 
 .ind-badge {
   display: inline-flex; align-items: center; gap: 3px;
   font-size: 0.61rem; font-weight: 700;
@@ -319,22 +319,23 @@ header {
 .ind.bueno  .ind-badge { background: rgba(22,101,52,0.09); border-color: var(--good-border); color: var(--good-text); }
 .ind.alerta .ind-badge { background: rgba(133,77,14,0.08); border-color: var(--warn-border); color: var(--warn-text); }
 .ind.critico .ind-badge{ background: rgba(159,18,57,0.08); border-color: var(--bad-border);  color: var(--bad-text); }
-
+ 
 .ind-sep { height: 1px; background: rgba(0,0,0,0.07); margin: 13px 0 12px; }
 .ind-msg { font-size: 0.79rem; line-height: 1.68; }
 .ind.bueno  .ind-msg  { color: var(--good-text); }
 .ind.alerta .ind-msg  { color: var(--warn-text); }
 .ind.critico .ind-msg { color: var(--bad-text); }
-
-/* Barra de progreso para punto de equilibrio */
+ 
+/* Barra de progreso para indicadores */
 .pe-bar-wrap { margin-top: 10px; }
 .pe-bar-label { display: flex; justify-content: space-between; font-size: 0.68rem; font-weight: 600; margin-bottom: 5px; }
 .pe-bar-track { height: 6px; background: rgba(0,0,0,0.08); border-radius: 3px; overflow: hidden; }
 .pe-bar-fill  { height: 100%; border-radius: 3px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+.pe-bar-fill-2 { opacity: 0.55; }
 .ind.bueno  .pe-bar-fill { background: var(--good-text); }
 .ind.alerta .pe-bar-fill { background: var(--warn-text); }
 .ind.critico .pe-bar-fill{ background: var(--bad-text); }
-
+ 
 /* ── CTA ── */
 .cta {
   background: var(--blue-900);
@@ -384,7 +385,7 @@ header {
 .ben-ico   { font-size: 1.1rem; margin-bottom: 8px; }
 .ben-title { font-size: 0.8rem; font-weight: 700; color: var(--white); margin-bottom: 3px; }
 .ben-desc  { font-size: 0.73rem; color: rgba(255,255,255,0.36); line-height: 1.5; }
-
+ 
 .cta-div  { height: 1px; background: rgba(255,255,255,0.07); margin: 0 48px; position: relative; z-index: 1; }
 .cta-bot  { padding: 36px 48px 46px; position: relative; z-index: 1; }
 .cta-bot h3 { font-size: 0.97rem; font-weight: 700; color: var(--white); margin-bottom: 4px; }
@@ -405,12 +406,12 @@ header {
 }
 .cc-lbl { font-size: 0.63rem; font-weight: 600; letter-spacing: 0.7px; text-transform: uppercase; color: rgba(255,255,255,0.33); margin-bottom: 1px; }
 .cc-val { font-size: 0.84rem; font-weight: 600; color: var(--white); }
-
+ 
 footer {
   text-align: center; padding: 28px 0 20px;
   font-size: 0.71rem; color: var(--gray-400);
 }
-
+ 
 @media (max-width: 600px) {
   .hero { padding: 46px 18px 54px; }
   .form-card { padding: 22px 18px; }
@@ -422,7 +423,7 @@ footer {
 </style>
 </head>
 <body>
-
+ 
 <!-- HEADER -->
 <header>
   <div class="hdr">
@@ -435,7 +436,7 @@ footer {
     <div class="hdr-badge">Diagnóstico gratuito</div>
   </div>
 </header>
-
+ 
 <!-- HERO -->
 <div class="hero">
   <div class="hero-inner">
@@ -446,14 +447,14 @@ footer {
   
 <!-- MAIN -->
 <div class="main">
-
+ 
   <!-- FORMULARIO -->
   <div class="form-card">
     <div class="form-intro">
       <h2>Cómo va tu negocio este mes</h2>
       <p>Con esta información generamos tu diagnóstico personalizado con recomendaciones prácticas</p>
     </div>
-
+ 
     <!-- Ejemplo orientador -->
     <div class="example-row">
       <div class="example-icon">💡</div>
@@ -461,7 +462,7 @@ footer {
         <p>Piensa en tu negocio como un tablero de control: <strong>estos números son tus mejores indicadores.</strong></p>
       </div>
     </div>
-
+ 
     <div class="fields-grid">
       <div class="field">
         <div class="field-label">💵 Ventas del mes <br><span class="field-hint">Todo lo que facturaste</span></div>
@@ -488,17 +489,17 @@ footer {
         <div class="field-wrap"><span class="field-pre">$</span><input type="number" id="por_pagar" placeholder="0.00" min="0"></div>
       </div>
     </div>
-
+ 
     <button class="btn-run" id="btnRun" onclick="analizar()">
       <div class="spinner"></div>
       <span class="btn-txt">Ver mi diagnóstico →</span>
     </button>
     <p style="text-align:center; font-size:0.72rem; color:var(--gray-400); margin-top:10px; line-height:1.5;">🔒 Tus datos son privados y solo se usan para generar tu diagnóstico</p>
   </div>
-
+ 
   <!-- RESULTADOS -->
   <div id="results">
-
+ 
     <!-- SCORE -->
     <div class="score-strip">
       <div class="score-donut">
@@ -518,10 +519,10 @@ footer {
         <div class="tag-row" id="sTags"></div>
       </div>
     </div>
-
+ 
     <!-- INDICADORES -->
     <div class="ind-grid" id="indGrid"></div>
-
+ 
     <!-- CTA -->
     <div class="cta">
       <div class="cta-top">
@@ -551,9 +552,9 @@ footer {
           </div>
         </div>
       </div>
-
+ 
       <div class="cta-div"></div>
-
+ 
       <div class="cta-bot">
         <h3>Cuéntanos tu caso</h3>
         <div class="contact-row">
@@ -581,28 +582,28 @@ footer {
         </div>
       </div>
     </div>
-
+ 
   </div><!-- /results -->
 </div><!-- /main -->
-
+ 
 <footer>
   Radar Financiero &nbsp;·&nbsp; Los indicadores son referenciales y no sustituyen asesoría financiera profesional.
 </footer>
-
+ 
 <script>
 const BADGE = { bueno: '✓ Bien', alerta: '⚠ Atención', critico: '✕ Crítico' };
-
+ 
 async function analizar() {
   const btn = document.getElementById('btnRun');
   btn.classList.add('loading');
-
+ 
   const ids = ['ventas','costos','gastos','caja','por_cobrar','por_pagar'];
   const data = {};
   ids.forEach(id => {
     const v = document.getElementById(id).value;
     data[id] = v === '' ? 0 : parseFloat(v);
   });
-
+ 
   try {
     const res    = await fetch('/analizar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     const result = await res.json();
@@ -613,12 +614,12 @@ async function analizar() {
   }
   btn.classList.remove('loading');
 }
-
+ 
 function renderResults(data) {
   const el = document.getElementById('results');
   el.style.display = 'block';
   setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
-
+ 
   /* ── Score ring ── */
   const score  = data.score;
   const R      = 40;
@@ -628,18 +629,18 @@ function renderResults(data) {
   const sColor = score >= 65 ? '#14532d' : score >= 40 ? '#713f0c' : '#881337';
   fill.style.stroke = sColor;
   setTimeout(() => { fill.style.strokeDasharray = circum; fill.style.strokeDashoffset = offset; }, 80);
-
+ 
   let cur = 0;
   const numEl = document.getElementById('sNum');
   numEl.style.color = sColor;
   const iv = setInterval(() => { cur = Math.min(cur + 2, score); numEl.textContent = cur; if (cur >= score) clearInterval(iv); }, 16);
-
+ 
   /* ── Score header ── */
   let pBg, pBorder, pColor, title, desc;
   if (score >= 65) {
     pBg = '#f0fdf4'; pBorder = '#86efac'; pColor = '#166534';
     title = 'Tu negocio está en buena forma';
-    desc  = 'La mayoría de tus números están donde deberían. Tienes una base sólida para seguir creciendo.';
+    desc  = 'La mayoría de tus números están donde deberían. Tienes una base sólida para seguir creciendo, siempre hay oportunidad de ir un paso más allá.';
   } else if (score >= 40) {
     pBg = '#fefce8'; pBorder = '#fde047'; pColor = '#854d0e';
     title = 'Hay algunas cosas por mejorar';
@@ -654,13 +655,13 @@ function renderResults(data) {
   pill.textContent   = score >= 65 ? '✓ Situación saludable' : score >= 40 ? '⚠ Requiere atención' : '✕ Situación crítica';
   document.getElementById('sTitle').textContent = title;
   document.getElementById('sDesc').textContent  = desc;
-
+ 
   /* Tags */
   const tags = document.getElementById('sTags');
   tags.innerHTML = '';
   (data.resumen.buenos||[]).forEach(n   => { tags.innerHTML += `<span class="tag g">✓ ${n}</span>`; });
   (data.resumen.criticos||[]).forEach(n => { tags.innerHTML += `<span class="tag b">✕ ${n}</span>`; });
-
+ 
   /* ── Indicator cards ── */
   const grid = document.getElementById('indGrid');
   grid.innerHTML = '';
@@ -668,19 +669,31 @@ function renderResults(data) {
     const card = document.createElement('div');
     card.className = `ind ${ind.estado}`;
     card.style.animationDelay = `${i * 0.06}s`;
-
-    /* Barra de progreso para punto de equilibrio */
-    const barraHTML = ind.id === 'equilibrio' && ind.extra !== undefined ? `
-      <div class="pe-bar-wrap">
-        <div class="pe-bar-label">
-          <span>Avance sobre el mínimo necesario</span>
-          <span>${Math.min(ind.extra, 100).toFixed(0)}%</span>
-        </div>
-        <div class="pe-bar-track">
-          <div class="pe-bar-fill" style="width:0%" data-w="${Math.min(ind.extra, 100)}%"></div>
-        </div>
-      </div>` : '';
-
+ 
+    /* Barra comparativa para eficiencia operativa */
+    let barraHTML = '';
+    if (ind.id === 'comparativa' && ind.extra_mb !== undefined && ind.extra_mg !== undefined) {
+      const wMb = Math.min(ind.extra_mb, 100);
+      const wMg = Math.max(0, Math.min(ind.extra_mg, 100));
+      barraHTML = `
+        <div class="pe-bar-wrap">
+          <div class="pe-bar-label">
+            <span>Margen sobre ventas</span>
+            <span>${wMb.toFixed(1)}%</span>
+          </div>
+          <div class="pe-bar-track">
+            <div class="pe-bar-fill" style="width:0%" data-w="${wMb}%"></div>
+          </div>
+          <div class="pe-bar-label" style="margin-top:8px;">
+            <span>Margen de ganancia</span>
+            <span>${wMg.toFixed(1)}%</span>
+          </div>
+          <div class="pe-bar-track">
+            <div class="pe-bar-fill pe-bar-fill-2" style="width:0%" data-w="${wMg}%"></div>
+          </div>
+        </div>`;
+    }
+ 
     card.innerHTML = `
       <div class="ind-head">
         <div class="ind-left">
@@ -701,10 +714,10 @@ function renderResults(data) {
     `;
     grid.appendChild(card);
   });
-
+ 
   /* Animate progress bars */
   setTimeout(() => {
-    document.querySelectorAll('.pe-bar-fill').forEach(b => { b.style.width = b.dataset.w; });
+    document.querySelectorAll('.pe-bar-fill, .pe-bar-fill-2').forEach(b => { b.style.width = b.dataset.w; });
   }, 300);
 }
 </script>
