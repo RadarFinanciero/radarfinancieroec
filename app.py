@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
- 
+
 app = Flask(__name__)
- 
+
 def calcular(data):
     try:
         ventas     = float(data.get('ventas', 0))
@@ -10,9 +10,9 @@ def calcular(data):
         caja       = float(data.get('caja', 0))
         por_cobrar = float(data.get('por_cobrar', 0))
         por_pagar  = float(data.get('por_pagar', 0))
- 
+
         indicadores = []
- 
+
         # 1. GANANCIA DEL MES
         ganancia = ventas - costos - gastos
         indicadores.append({
@@ -27,7 +27,7 @@ def calcular(data):
             'estado': 'bueno' if ganancia > 0 else ('alerta' if ganancia == 0 else 'critico'),
             'mensaje': _msg_ganancia(ganancia, ventas),
         })
- 
+
         # 2. MARGEN DE GANANCIA
         if ventas > 0:
             margen = ((ventas - costos - gastos) / ventas) * 100
@@ -43,8 +43,8 @@ def calcular(data):
                 'estado': 'bueno' if margen >= 15 else ('alerta' if margen >= 5 else 'critico'),
                 'mensaje': _msg_margen(margen),
             })
- 
-        # 3. MARGEN SOBRE VENTAS (solo costos de lo vendido)
+
+        # 3. MARGEN SOBRE VENTAS
         if ventas > 0:
             mb = ((ventas - costos) / ventas) * 100
             indicadores.append({
@@ -59,8 +59,8 @@ def calcular(data):
                 'estado': 'bueno' if mb >= 40 else ('alerta' if mb >= 20 else 'critico'),
                 'mensaje': _msg_margen_bruto(mb),
             })
- 
-        # 4. EFICIENCIA OPERATIVA (comparativa margen ventas vs margen ganancia)
+
+        # 4. EFICIENCIA OPERATIVA
         if ventas > 0:
             mb_val = ((ventas - costos) / ventas) * 100
             mg_val = ((ventas - costos - gastos) / ventas) * 100
@@ -85,7 +85,7 @@ def calcular(data):
                 'extra_mb': round(mb_val, 1),
                 'extra_mg': round(mg_val, 1),
             })
- 
+
         # 5. VELOCIDAD DE COBRO
         if ventas > 0:
             dias_cobro = (por_cobrar / ventas) * 30
@@ -102,7 +102,7 @@ def calcular(data):
                 'estado': 'bueno' if dias_cobro <= 15 else ('alerta' if dias_cobro <= 25 else 'critico'),
                 'mensaje': _msg_cobro(dias_cobro, por_cobrar, ventas, pct_cobrar),
             })
- 
+
         # 6. PRESIÓN DE PROVEEDORES
         if ventas > 0:
             pct_pagar = (por_pagar / ventas) * 100
@@ -116,156 +116,104 @@ def calcular(data):
                 'tipo': 'porcentaje',
                 'icono': '📦',
                 'estado': 'bueno' if pct_pagar <= 20 else ('alerta' if pct_pagar <= 40 else 'critico'),
-                'mensaje': _msg_proveedores(pct_pagar, por_pagar, ventas, por_cobrar),
+                'mensaje': _msg_proveedores(pct_pagar, por_pagar, ventas),
             })
- 
-        score  = _score(indicadores)
+
+        score   = _score(indicadores)
         resumen = _resumen(indicadores)
- 
+
         return {'success': True, 'indicadores': indicadores, 'score': score, 'resumen': resumen}
- 
+
     except Exception as e:
         return {'success': False, 'error': str(e)}
- 
- 
+
+
 def _fmt_dinero(v):
     if abs(v) >= 1000:
         return f"{'−' if v < 0 else ''}${abs(v):,.0f}"
     return f"{'−' if v < 0 else ''}${abs(v):.2f}"
- 
- 
+
+
 def _msg_ganancia(g, ventas):
+    pct = (g / ventas * 100) if ventas > 0 else 0
     if g > 0:
-        pct = (g / ventas * 100) if ventas > 0 else 0
         if pct >= 20:
-            return f"¡Tu negocio genera ${g:,.2f} de ganancia este mes, un {pct:.1f}% sobre tus ventas. Estás en una posición cómoda para reinvertir o ahorrar. Para seguir mejorando, considera si puedes reducir costos o escalar ventas sin aumentar gastos proporcionales."
+            return f"¡Sólido! Ganas ${g:,.2f} este mes ({pct:.1f}% de tus ventas). Reinvierte o ahorra parte para seguir creciendo."
         elif pct >= 10:
-            return f"Tu negocio gana ${g:,.2f} este mes ({pct:.1f}% de tus ventas). Es un margen positivo, y hay espacio real para mejorar: revisa si tus gastos fijos o costos variables pueden optimizarse para ampliar este margen."
+            return f"Ganas ${g:,.2f} este mes ({pct:.1f}%). Hay margen para mejorar: revisa si puedes reducir algún gasto fijo o costo variable."
         else:
-            return f"Ganas ${g:,.2f} este mes, pero el margen es ajustado ({pct:.1f}%). Cualquier mes complicado podría dejarte en cero. Analiza qué gastos podrías reducir o si tienes oportunidad de subir precios sin perder clientes."
+            return f"Ganas ${g:,.2f}, pero el margen es ajustado ({pct:.1f}%). Un mes difícil podría dejarte en cero. Actúa antes de que eso pase."
     elif g == 0:
-        return "Tu negocio empata exactamente: no ganas ni pierdes. Estás en el límite, cualquier gasto adicional o baja en ventas resultaría en pérdida. Vale la pena buscar una palanca de mejora, aunque sea pequeña."
+        return "No ganas ni pierdes. Estás en el límite: cualquier gasto extra o baja en ventas se convierte en pérdida."
     else:
-        return f"Este mes tu negocio perdió ${abs(g):,.2f}. Tus costos y gastos superan lo que vendes. Revisa qué puedes recortar o cómo aumentar tus ventas. Es importante actuar pronto."
- 
- 
+        return f"Perdiste ${abs(g):,.2f} este mes. Tus costos superan tus ventas. Identifica qué recortar y actúa pronto."
+
+
 def _msg_margen(m):
     if m >= 25:
-        return f"Por cada $100 que vendes, te quedan ${m:.1f} de ganancia neta. Es un margen sólido, tu negocio es eficiente y rentable. Aun así, siempre hay oportunidad: ¿podrías potenciar los productos o servicios de mayor margen?"
+        return f"¡De cada $100 vendidos te quedan ${m:.1f}! Margen sólido. Considera potenciar los productos o servicios más rentables para seguir subiendo."
     elif m >= 15:
-        return f"Te quedan ${m:.1f} de cada $100 vendidos. Es un margen aceptable, con potencial real por aprovechar. Negocia precios con proveedores o revisa si algunos gastos fijos pueden reducirse para ampliar esta cifra."
+        return f"Te quedan ${m:.1f} de cada $100 vendidos. Aceptable, pero mejorable. Negocia con proveedores o revisa tus gastos fijos."
     elif m >= 5:
-        return f"Solo ${m:.1f} de cada $100 vendidos llegan a tu bolsillo. El margen es estrecho y un imprevisto puede borrar toda la ganancia del mes. Enfócate en reducir costos o aumentar precios gradualmente."
+        return f"Solo ${m:.1f} de cada $100 llegan a tu bolsillo. Margen muy estrecho: un imprevisto puede borrar toda la ganancia del mes."
     else:
-        return f"Tu margen es crítico: ${m:.1f} por cada $100 vendidos. El negocio apenas cubre sus costos. Necesitas reducir costos y gastos de manera urgente o replantear tu modelo de precios."
- 
- 
+        return f"Margen crítico: ${m:.1f} por cada $100. El negocio casi no cubre sus costos. Necesitas ajustar precios o reducir gastos urgentemente."
+
+
 def _msg_margen_bruto(mb):
     if mb >= 50:
-        return f"Después de pagar lo que vendiste, te queda el {mb:.1f}% para cubrir gastos fijos y generar ganancia. ¡Excelente base de producto! Aprovecha este margen asegurándote de que tus gastos fijos estén bien controlados, ya que aquí es donde puedes seguir mejorando."
+        return f"¡Excelente! El {mb:.1f}% de cada venta queda después de pagar lo que vendiste. Cuida que tus gastos fijos no consuman ese margen."
     elif mb >= 30:
-        return f"Te queda el {mb:.1f}% de cada venta para cubrir tus gastos fijos y generar ganancia. Es un margen saludable. Aún puedes mejorar: analiza si tus proveedores principales ofrecen condiciones más favorables."
+        return f"Saludable: te queda el {mb:.1f}% para cubrir gastos y generar ganancia. Aún puedes mejorar negociando mejores precios con proveedores."
     elif mb >= 20:
-        return f"Con el {mb:.1f}% que te queda de cada venta, cubres tus gastos con poco margen de error. Considera subir precios gradualmente o reducir el costo de lo que vendes para ganar más espacio."
+        return f"El {mb:.1f}% que te queda deja poco margen de error. Considera subir precios o reducir el costo de lo que vendes."
     else:
-        return f"Solo el {mb:.1f}% de tus ventas queda después de pagar lo que vendiste. Es muy poco para cubrir gastos fijos y generar ganancia. Revisa urgentemente tus precios de venta o el costo de tus productos."
- 
- 
+        return f"Solo el {mb:.1f}% queda después de cubrir lo que vendiste. Muy poco para pagar gastos fijos y ganar. Revisa precios o costos urgentemente."
+
+
 def _msg_comparativa(mb, mg, brecha):
     if mb >= 40 and mg >= 15:
-        return (
-            f"Tu margen sobre ventas es {mb:.1f}% y tu margen de ganancia es {mg:.1f}%. "
-            f"¡Ambos son saludables! Tus costos de producto son bajos y tus gastos fijos están bien controlados. "
-            f"La brecha de {brecha:.1f}% representa el peso de tus gastos fijos. "
-            f"Para seguir mejorando, evalúa si puedes crecer en ventas sin incrementar proporcionalmente esos gastos."
-        )
+        return f"¡Tus números cuadran bien! Costos de producto bajos ({mb:.1f}%) y gastos fijos controlados. La brecha de {brecha:.1f}% es el peso de tus gastos fijos: intenta crecer en ventas sin subirlos proporcionalmente."
     elif mb >= 40 and mg < 15:
-        return (
-            f"Tu margen sobre ventas es alto ({mb:.1f}%), lo que indica que tus costos de producto son eficientes. "
-            f"Sin embargo, tu margen de ganancia es solo {mg:.1f}%, lo que señala que tus gastos fijos (arriendo, sueldos, servicios) "
-            f"consumen la mayor parte de ese margen. La brecha de {brecha:.1f}% es el espacio que se llevan tus gastos fijos. "
-            f"Revisa si alguno puede reducirse o renegociarse."
-        )
+        return f"Tus costos de producto son eficientes ({mb:.1f}%), pero tus gastos fijos se comen el margen: solo te queda {mg:.1f}% de ganancia. Revisa arriendo, sueldos y servicios, hay espacio para negociar."
     elif mb < 30 and mg < 15:
-        return (
-            f"Tu margen sobre ventas es {mb:.1f}% y tu margen de ganancia {mg:.1f}%. "
-            f"Ambos márgenes son bajos, lo que indica presión tanto en el costo de tus productos como en tus gastos fijos. "
-            f"Es una señal de alerta doble: considera subir precios, reducir costos de producto y optimizar gastos fijos al mismo tiempo."
-        )
+        return f"Alerta doble: el margen sobre ventas ({mb:.1f}%) y el de ganancia ({mg:.1f}%) son bajos. Hay presión tanto en costos de producto como en gastos fijos. Ataca los dos frentes."
     elif mb >= 20 and mg >= 5:
-        return (
-            f"Tu margen sobre ventas ({mb:.1f}%) es razonable, pero tu margen de ganancia ({mg:.1f}%) todavía tiene espacio para crecer. "
-            f"Los gastos fijos representan una brecha de {brecha:.1f}%. Trabaja en optimizarlos progresivamente para que más de ese margen bruto llegue a tu bolsillo."
-        )
+        return f"Margen sobre ventas razonable ({mb:.1f}%), pero la ganancia final ({mg:.1f}%) aún tiene espacio para crecer. Reduce gastos fijos progresivamente para que más dinero llegue a tu bolsillo."
     else:
-        return (
-            f"Tu margen sobre ventas es {mb:.1f}% y tu margen de ganancia {mg:.1f}%. "
-            f"La situación requiere atención en ambos frentes: tanto el costo de tus productos como tus gastos fijos están presionando la rentabilidad. "
-            f"Identifica cuál de los dos tiene mayor potencial de mejora y empieza por ahí."
-        )
- 
- 
+        return f"Margen sobre ventas de {mb:.1f}% y ganancia de {mg:.1f}%: ambos necesitan mejora. Identifica cuál frente (costos o gastos fijos) tiene más potencial de mejora y empieza por ahí."
+
+
 def _msg_cobro(dias, por_cobrar, ventas, pct):
     if dias <= 10:
-        return (
-            f"Tus clientes te pagan en promedio en {dias:.1f} días. ¡Excelente velocidad de cobro! "
-            f"Tienes ${por_cobrar:,.2f} pendientes, equivalente al {pct:.1f}% de tus ventas mensuales. "
-            f"Mantener este ritmo te da liquidez constante. Considera si puedes ofrecer incentivos de pago anticipado para seguir mejorando."
-        )
+        return f"¡Cobras en {dias:.1f} días, excelente! Tienes ${por_cobrar:,.2f} pendientes ({pct:.1f}% de tus ventas). Considera descuentos por pago anticipado para mantener este ritmo."
     elif dias <= 15:
-        return (
-            f"Cobras en promedio en {dias:.1f} días, lo que es saludable. "
-            f"Tienes ${por_cobrar:,.2f} por cobrar ({pct:.1f}% de tus ventas). "
-            f"Si lograras reducir 3 o 4 días este ciclo, mejorarías notablemente tu flujo de caja disponible."
-        )
+        return f"Cobras en {dias:.1f} días, saludable. Tienes ${por_cobrar:,.2f} por entrar. Reducir 3 o 4 días este ciclo mejoraría notablemente tu flujo de caja."
     elif dias <= 25:
-        return (
-            f"Tus clientes demoran en promedio {dias:.1f} días en pagarte. Es un plazo elevado. "
-            f"Tienes ${por_cobrar:,.2f} pendientes ({pct:.1f}% de tus ventas mensuales). "
-            f"Cada día extra que tardas en cobrar es dinero que no puedes usar. Implementa recordatorios de cobro o incentivos por pago anticipado."
-        )
+        return f"Tus clientes tardan {dias:.1f} días en pagarte. Tienes ${por_cobrar:,.2f} inmovilizados ({pct:.1f}% de tus ventas). Implementa recordatorios o incentivos por pago anticipado."
     else:
-        return (
-            f"Tus clientes tardan {dias:.1f} días en pagarte, lo que representa un riesgo de liquidez alto. "
-            f"Tienes ${por_cobrar:,.2f} inmovilizados ({pct:.1f}% de tus ventas). "
-            f"Con este ciclo de cobro largo, podrías tener dificultades para cubrir tus propios pagos a tiempo. "
-            f"Revisa tus políticas de crédito y refuerza el seguimiento de cuentas vencidas."
-        )
- 
- 
-def _msg_proveedores(pct, por_pagar, ventas, por_cobrar):
+        return f"Ciclo de cobro de {dias:.1f} días: riesgo alto. Tienes ${por_cobrar:,.2f} sin ingresar ({pct:.1f}% de tus ventas). Refuerza el seguimiento de cuentas y revisa tu política de crédito."
+
+
+def _msg_proveedores(pct, por_pagar, ventas):
     if pct <= 10:
-        return (
-            f"Debes a proveedores ${por_pagar:,.2f}, apenas el {pct:.1f}% de tus ventas mensuales. "
-            f"¡Muy baja presión financiera de tu cadena de compras! Esto te da flexibilidad para negociar mejores condiciones o plazos más largos si lo necesitas."
-        )
+        return f"¡Muy baja presión! Debes a proveedores solo el {pct:.1f}% de tus ventas (${por_pagar:,.2f}). Tienes margen para negociar mejores condiciones si lo necesitas."
     elif pct <= 20:
-        return (
-            f"Tus cuentas por pagar a proveedores representan el {pct:.1f}% de tus ventas (${por_pagar:,.2f}). "
-            f"Es una proporción manejable. Mantener un buen historial de pago te da poder de negociación para obtener mejores precios o plazos en el futuro."
-        )
+        return f"Deuda con proveedores manejable: {pct:.1f}% de tus ventas (${por_pagar:,.2f}). Un buen historial de pago te da poder para negociar mejores precios o plazos."
     elif pct <= 40:
-        return (
-            f"Debes a proveedores ${por_pagar:,.2f}, equivalente al {pct:.1f}% de tus ventas mensuales. "
-            f"Es una proporción que merece seguimiento. Si tus clientes demoran en pagarte, podrías tener problemas para cumplir con proveedores. "
-            f"Alinea tus plazos de cobro con los de pago para evitar tensiones de caja."
-        )
+        return f"Debes a proveedores el {pct:.1f}% de tus ventas (${por_pagar:,.2f}). Si los clientes se demoran en pagarte, podrías tener problemas. Alinea cobros y pagos."
     else:
-        return (
-            f"Tus cuentas por pagar representan el {pct:.1f}% de tus ventas mensuales (${por_pagar:,.2f}). "
-            f"Es una carga alta: casi la mitad de lo que vendes ya está comprometido con proveedores. "
-            f"Prioriza reducir este porcentaje negociando plazos más largos y acelerando el cobro a clientes."
-        )
- 
- 
+        return f"El {pct:.1f}% de tus ventas ya está comprometido con proveedores (${por_pagar:,.2f}). Carga alta: negocia plazos más largos y acelera el cobro a clientes."
+
+
 def _score(inds):
     mapa = {'bueno': 10, 'alerta': 5, 'critico': 0}
     if not inds:
         return 0
     total = sum(mapa.get(i['estado'], 5) for i in inds)
     return round((total / (len(inds) * 10)) * 100)
- 
- 
+
+
 def _resumen(inds):
     buenos   = [i for i in inds if i['estado'] == 'bueno']
     alertas  = [i for i in inds if i['estado'] == 'alerta']
@@ -275,17 +223,16 @@ def _resumen(inds):
         'alertas':  [i['nombre'] for i in alertas],
         'criticos': [i['nombre'] for i in criticos],
     }
- 
- 
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
- 
+
 @app.route('/analizar', methods=['POST'])
 def analizar():
     data = request.get_json()
     return jsonify(calcular(data))
- 
+
 if __name__ == '__main__':
     app.run()
- 
